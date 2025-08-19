@@ -2,76 +2,83 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>CyberSecure Academy</title>
+  <title>Be Hacker</title>
   <style>
     body {
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      font-family: "Courier New", monospace;
       margin: 0;
       padding: 0;
       background: #000;
       color: #fff;
-      background-image: url("https://i.ibb.co/5sLgW8F/binary-bg.gif"); /* animated binary */
+      background: url("https://i.ibb.co/2sFJ0Zx/hacker-mask.jpg") no-repeat center center fixed;
       background-size: cover;
-      background-attachment: fixed;
+    }
+
+    /* Overlay to darken */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: -1;
     }
 
     /* HEADER */
     header {
       background: #000;
-      color: white;
+      color: #00ff00;
       padding: 1rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 2px solid #e63946;
+      border-bottom: 2px solid red;
       position: sticky;
       top: 0;
       z-index: 1000;
     }
     header h1 {
       margin: 0;
-      font-size: 1.6rem;
-      letter-spacing: 2px;
-      color: #e63946;
+      font-size: 1.8rem;
+      text-transform: uppercase;
+      color: #00ff00;
+      text-shadow: 0 0 15px #00ff00, 0 0 30px #00ff00;
     }
     nav a {
-      color: #fff;
+      color: white;
       margin: 0 15px;
       text-decoration: none;
       font-weight: bold;
       transition: color 0.3s;
     }
     nav a:hover {
-      color: #e63946;
+      color: red;
+      text-shadow: 0 0 10px red;
     }
 
     /* HERO */
     .hero {
       text-align: center;
-      padding: 80px 20px;
-      background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)),
-                  url("https://i.ibb.co/qDbCtLV/hacker-bg.jpg") no-repeat center;
-      background-size: cover;
+      padding: 100px 20px;
+      background: rgba(0,0,0,0.7);
       color: #fff;
     }
     .hero h2 {
-      font-size: 2.8rem;
-      margin-bottom: 15px;
-      color: #e63946;
-      text-shadow: 0 0 10px #e63946;
+      font-size: 3rem;
+      color: red;
+      text-shadow: 0 0 20px red, 0 0 40px red;
     }
     .hero p {
-      font-size: 1.2rem;
-      max-width: 700px;
-      margin: auto;
+      font-size: 1.3rem;
+      color: #00ff00;
+      text-shadow: 0 0 10px #00ff00;
     }
 
-    /* BUTTONS */
+    /* BUTTON */
     .btn {
       display: inline-block;
       margin-top: 25px;
       padding: 12px 28px;
-      background: #e63946;
+      background: red;
       color: white;
       text-decoration: none;
       border-radius: 5px;
@@ -79,9 +86,9 @@
       transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
     }
     .btn:hover {
-      background: #ff1e1e;
-      transform: scale(1.05);
-      box-shadow: 0 0 15px #e63946;
+      background: darkred;
+      transform: scale(1.1);
+      box-shadow: 0 0 15px red;
     }
 
     /* COURSES */
@@ -94,26 +101,30 @@
       margin: auto;
     }
     .course-card {
-      background: #111;
+      background: rgba(0,0,0,0.8);
       padding: 20px;
       border-radius: 10px;
-      border: 1px solid #e63946;
+      border: 1px solid #00ff00;
       text-align: center;
       transition: transform 0.3s, box-shadow 0.3s;
     }
     .course-card:hover {
       transform: translateY(-8px);
-      box-shadow: 0 0 15px #e63946;
+      box-shadow: 0 0 20px red;
     }
     .course-card img {
       width: 100%;
       border-radius: 8px;
       margin-bottom: 15px;
-      border: 2px solid #e63946;
+      border: 2px solid #00ff00;
     }
     .course-card h3 {
-      color: #e63946;
+      color: #00ff00;
       margin-bottom: 10px;
+      text-shadow: 0 0 10px #00ff00;
+    }
+    .course-card p {
+      color: white;
     }
 
     /* INFO SECTIONS */
@@ -121,15 +132,15 @@
       padding: 50px 20px;
       max-width: 900px;
       margin: auto;
-      background: rgba(20,20,20,0.95);
+      background: rgba(0,0,0,0.8);
       border-radius: 10px;
       margin-top: 30px;
-      border: 1px solid #e63946;
+      border: 1px solid red;
       text-align: center;
     }
     section#about h2, section#contact h2 {
-      color: #e63946;
-      margin-bottom: 15px;
+      color: red;
+      text-shadow: 0 0 15px red;
     }
 
     /* FOOTER */
@@ -139,13 +150,13 @@
       color: #aaa;
       padding: 1rem;
       margin-top: 40px;
-      border-top: 2px solid #e63946;
+      border-top: 2px solid #00ff00;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>CyberSecure Academy</h1>
+    <h1>Be Hacker</h1>
     <nav>
       <a href="#courses">Courses</a>
       <a href="#about">About</a>
@@ -154,49 +165,48 @@
   </header>
 
   <section class="hero">
-    <h2>Master Cybersecurity Skills</h2>
-    <p>Learn ethical hacking, CompTIA certifications, and advanced defense strategies with hands-on labs.</p>
-    <a class="btn" href="#courses">Explore Courses</a>
+    <h2>Welcome to the Dark Side</h2>
+    <p>Learn to hack, defend, and dominate the cyber world.</p>
+    <a class="btn" href="#courses">Join Now</a>
   </section>
 
   <section id="courses" class="courses">
     <div class="course-card">
       <img src="https://i.ibb.co/2tS4PQj/ethical-hacking.jpg" alt="Ethical Hacking">
-      <h3>Ethical Hacking Fundamentals</h3>
-      <p>Start your journey into penetration testing and system security.</p>
-      <a class="btn" href="#">Enroll Now</a>
+      <h3>Hacking Basics</h3>
+      <p>Enter the world of penetration testing and system exploitation.</p>
+      <a class="btn" href="#">Start</a>
     </div>
 
     <div class="course-card">
-      <img src="https://i.ibb.co/D7vPyW7/security-plus.jpg" alt="CompTIA Security+">
-      <h3>CompTIA Security+ Prep</h3>
-      <p>Learn everything needed to pass the Security+ certification.</p>
-      <a class="btn" href="#">Enroll Now</a>
+      <img src="https://i.ibb.co/D7vPyW7/security-plus.jpg" alt="Cybersecurity Defense">
+      <h3>Cyber Defense</h3>
+      <p>Defend against red team tactics and cyber attacks.</p>
+      <a class="btn" href="#">Defend</a>
     </div>
 
     <div class="course-card">
-      <img src="https://i.ibb.co/Y3rq7sj/cyber-defense.jpg" alt="Advanced Defense">
-      <h3>Advanced Cyber Defense</h3>
-      <p>Go beyond basics and defend against modern cyber threats.</p>
-      <a class="btn" href="#">Enroll Now</a>
+      <img src="https://i.ibb.co/Y3rq7sj/cyber-defense.jpg" alt="Advanced">
+      <h3>Advanced Exploits</h3>
+      <p>Master zero-days and advanced attack strategies.</p>
+      <a class="btn" href="#">Level Up</a>
     </div>
   </section>
 
   <section id="about">
-    <h2>About Us</h2>
-    <p>CyberSecure Academy is your trusted source for world-class cybersecurity training. 
-    Our mission is to prepare the next generation of defenders against global cyber threats. 
-    With real-world labs, expert mentors, and a strong community, we make you job-ready.</p>
+    <h2>About Be Hacker</h2>
+    <p>Be Hacker is a dangerous place for those who want to learn the dark arts of cybersecurity. 
+    Our courses mix real-world red team tactics with defense strategies to make you unstoppable.</p>
   </section>
 
   <section id="contact">
     <h2>Contact Us</h2>
-    <p>Email: <a href="mailto:info@cybersecureacademy.com" style="color:#e63946;">info@cybersecureacademy.com</a></p>
-    <p>Phone: +1 (555) 123-4567</p>
+    <p>Email: <a href="mailto:dark@behacker.com" style="color:red;">dark@behacker.com</a></p>
+    <p>Secure Line: +1 (555) 666-1313</p>
   </section>
 
   <footer>
-    <p>© 2025 CyberSecure Academy | Red Team ⚡ Black Hat ⚡ White Hat</p>
+    <p>© 2025 Be Hacker | Enter at Your Own Risk ⚠️</p>
   </footer>
 </body>
 </html>
