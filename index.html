@@ -8,73 +8,83 @@
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
-      background: #0d0d0d;
-      color: #eaeaea;
-      background-image: url("https://i.ibb.co/5sLgW8F/binary-bg.gif");
+      background: #000;
+      color: #fff;
+      background-image: url("https://i.ibb.co/5sLgW8F/binary-bg.gif"); /* animated binary */
       background-size: cover;
       background-attachment: fixed;
     }
 
+    /* HEADER */
     header {
-      background: linear-gradient(90deg, #0d1b2a, #1b263b, #0d1b2a);
+      background: #000;
       color: white;
       padding: 1rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.6);
+      border-bottom: 2px solid #e63946;
       position: sticky;
       top: 0;
       z-index: 1000;
     }
     header h1 {
       margin: 0;
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       letter-spacing: 2px;
-      color: #00ffcc;
+      color: #e63946;
     }
     nav a {
-      color: #eaeaea;
+      color: #fff;
       margin: 0 15px;
       text-decoration: none;
       font-weight: bold;
       transition: color 0.3s;
     }
     nav a:hover {
-      color: #00ffcc;
+      color: #e63946;
     }
 
+    /* HERO */
     .hero {
       text-align: center;
       padding: 80px 20px;
-      background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)),
+      background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)),
                   url("https://i.ibb.co/qDbCtLV/hacker-bg.jpg") no-repeat center;
       background-size: cover;
-      color: #00ffcc;
+      color: #fff;
     }
     .hero h2 {
-      font-size: 2.5rem;
-      margin-bottom: 10px;
+      font-size: 2.8rem;
+      margin-bottom: 15px;
+      color: #e63946;
+      text-shadow: 0 0 10px #e63946;
     }
     .hero p {
       font-size: 1.2rem;
+      max-width: 700px;
+      margin: auto;
     }
+
+    /* BUTTONS */
     .btn {
       display: inline-block;
-      margin-top: 20px;
+      margin-top: 25px;
       padding: 12px 28px;
       background: #e63946;
       color: white;
       text-decoration: none;
-      border-radius: 30px;
+      border-radius: 5px;
       font-weight: bold;
-      transition: background 0.3s, transform 0.3s;
+      transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
     }
     .btn:hover {
-      background: #ff4d6d;
+      background: #ff1e1e;
       transform: scale(1.05);
+      box-shadow: 0 0 15px #e63946;
     }
 
+    /* COURSES */
     .courses {
       padding: 50px 20px;
       display: grid;
@@ -84,46 +94,52 @@
       margin: auto;
     }
     .course-card {
-      background: rgba(20,20,20,0.9);
+      background: #111;
       padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      border: 1px solid #e63946;
       text-align: center;
-      transition: transform 0.3s;
+      transition: transform 0.3s, box-shadow 0.3s;
     }
     .course-card:hover {
       transform: translateY(-8px);
-      box-shadow: 0 6px 15px rgba(0,255,204,0.5);
+      box-shadow: 0 0 15px #e63946;
     }
     .course-card img {
       width: 100%;
       border-radius: 8px;
       margin-bottom: 15px;
+      border: 2px solid #e63946;
     }
     .course-card h3 {
-      color: #00ffcc;
+      color: #e63946;
+      margin-bottom: 10px;
     }
 
+    /* INFO SECTIONS */
     section#about, section#contact {
       padding: 50px 20px;
       max-width: 900px;
       margin: auto;
-      background: rgba(0,0,0,0.8);
+      background: rgba(20,20,20,0.95);
       border-radius: 10px;
       margin-top: 30px;
-      box-shadow: 0 4px 12px rgba(0,255,204,0.2);
+      border: 1px solid #e63946;
+      text-align: center;
     }
     section#about h2, section#contact h2 {
-      color: #00ffcc;
+      color: #e63946;
+      margin-bottom: 15px;
     }
 
+    /* FOOTER */
     footer {
       text-align: center;
-      background: #0d1b2a;
-      color: #ccc;
+      background: #000;
+      color: #aaa;
       padding: 1rem;
       margin-top: 40px;
-      border-top: 2px solid #00ffcc;
+      border-top: 2px solid #e63946;
     }
   </style>
 </head>
@@ -173,14 +189,14 @@
     With real-world labs, expert mentors, and a strong community, we make you job-ready.</p>
   </section>
 
-  <section id="contact" style="text-align:center;">
+  <section id="contact">
     <h2>Contact Us</h2>
-    <p>Email: <a href="mailto:info@cybersecureacademy.com" style="color:#00ffcc;">info@cybersecureacademy.com</a></p>
+    <p>Email: <a href="mailto:info@cybersecureacademy.com" style="color:#e63946;">info@cybersecureacademy.com</a></p>
     <p>Phone: +1 (555) 123-4567</p>
   </section>
 
   <footer>
-    <p>© 2025 CyberSecure Academy | Designed with 💻🔒</p>
+    <p>© 2025 CyberSecure Academy | Red Team ⚡ Black Hat ⚡ White Hat</p>
   </footer>
 </body>
 </html>
