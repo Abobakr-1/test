@@ -1,10 +1,131 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>My First GitHub Page</title>
-  </head>
-  <body>
-    <h1>Hello, world!</h1>
-    <p>This is my first HTTPS website on GitHub Pages.</p>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CyberSecure Academy</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+      color: #333;
+    }
+    header {
+      background: #0d1b2a;
+      color: white;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      margin: 0;
+    }
+    nav a {
+      color: white;
+      margin: 0 10px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .hero {
+      text-align: center;
+      padding: 60px 20px;
+      background: url("https://via.placeholder.com/1200x400") no-repeat center;
+      background-size: cover;
+      color: white;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 12px 24px;
+      background: #e63946;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+    .courses {
+      padding: 40px 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .course-card {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .course-card img {
+      width: 100%;
+      border-radius: 5px;
+    }
+    footer {
+      text-align: center;
+      background: #0d1b2a;
+      color: white;
+      padding: 1rem;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>CyberSecure Academy</h1>
+    <nav>
+      <a href="#courses">Courses</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h2>Master Cybersecurity Skills</h2>
+    <p>Learn ethical hacking, CompTIA-style certifications, and advanced defense strategies with us.</p>
+    <a class="btn" href="#courses">Explore Courses</a>
+  </section>
+
+  <section id="courses" class="courses">
+    <div class="course-card">
+      <img src="https://via.placeholder.com/300x200" alt="Ethical Hacking">
+      <h3>Ethical Hacking Fundamentals</h3>
+      <p>Start your journey into penetration testing and system security.</p>
+      <a class="btn" href="#">Enroll Now</a>
+    </div>
+
+    <div class="course-card">
+      <img src="https://via.placeholder.com/300x200" alt="CompTIA Security+">
+      <h3>CompTIA Security+ Prep</h3>
+      <p>Learn everything needed to pass the Security+ certification.</p>
+      <a class="btn" href="#">Enroll Now</a>
+    </div>
+
+    <div class="course-card">
+      <img src="https://via.placeholder.com/300x200" alt="Advanced Defense">
+      <h3>Advanced Cyber Defense</h3>
+      <p>Go beyond basics and defend against modern cyber threats.</p>
+      <a class="btn" href="#">Enroll Now</a>
+    </div>
+  </section>
+
+  <section id="about" style="padding:40px; max-width:800px; margin:auto;">
+    <h2>About Us</h2>
+    <p>CyberSecure Academy is your trusted source for world-class cybersecurity training. 
+    Our mission is to prepare the next generation of defenders against global cyber threats.</p>
+  </section>
+
+  <section id="contact" style="padding:40px; max-width:800px; margin:auto; text-align:center;">
+    <h2>Contact Us</h2>
+    <p>Email: info@cybersecureacademy.com</p>
+    <p>Phone: +1 (555) 123-4567</p>
+  </section>
+
+  <footer>
+    <p>© 2025 CyberSecure Academy</p>
+  </footer>
+</body>
 </html>
