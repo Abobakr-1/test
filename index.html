@@ -10,10 +10,7 @@
       padding: 0;
       background: #000;
       color: #fff;
-background-color: #000;      background-size: cover;
     }
-
-    /* Overlay to darken */
     body::before {
       content: "";
       position: fixed;
@@ -21,8 +18,6 @@ background-color: #000;      background-size: cover;
       background: rgba(0,0,0,0.85);
       z-index: -1;
     }
-
-    /* HEADER */
     header {
       background: #000;
       color: #00ff00;
@@ -53,8 +48,6 @@ background-color: #000;      background-size: cover;
       color: red;
       text-shadow: 0 0 10px red;
     }
-
-    /* HERO */
     .hero {
       text-align: center;
       padding: 100px 20px;
@@ -71,8 +64,6 @@ background-color: #000;      background-size: cover;
       color: #00ff00;
       text-shadow: 0 0 10px #00ff00;
     }
-
-    /* BUTTON */
     .btn {
       display: inline-block;
       margin-top: 25px;
@@ -89,8 +80,6 @@ background-color: #000;      background-size: cover;
       transform: scale(1.1);
       box-shadow: 0 0 15px red;
     }
-
-    /* COURSES */
     .courses {
       padding: 50px 20px;
       display: grid;
@@ -125,8 +114,6 @@ background-color: #000;      background-size: cover;
     .course-card p {
       color: white;
     }
-
-    /* INFO SECTIONS */
     section#about, section#contact {
       padding: 50px 20px;
       max-width: 900px;
@@ -141,8 +128,6 @@ background-color: #000;      background-size: cover;
       color: red;
       text-shadow: 0 0 15px red;
     }
-
-    /* FOOTER */
     footer {
       text-align: center;
       background: #000;
@@ -175,13 +160,11 @@ background-color: #000;      background-size: cover;
       <p>Enter the world of penetration testing and system exploitation.</p>
       <a class="btn" href="#">Start</a>
     </div>
-
     <div class="course-card">
       <h3>Cyber Defense</h3>
       <p>Defend against red team tactics and cyber attacks.</p>
       <a class="btn" href="#">Defend</a>
     </div>
-
     <div class="course-card">
       <h3>Advanced Exploits</h3>
       <p>Master zero-days and advanced attack strategies.</p>
@@ -204,5 +187,20 @@ background-color: #000;      background-size: cover;
   <footer>
     <p>© 2025 Be Hacker | Enter at Your Own Risk ⚠️</p>
   </footer>
+
+  <!-- COOKIE SCRIPT -->
+  <script>
+    // Set basic cookies
+    document.cookie = "username=BeHacker; expires=Fri, 31 Dec 2025 23:59:59 GMT; path=/";
+    document.cookie = "theme=dark; expires=Fri, 31 Dec 2025 23:59:59 GMT; path=/";
+
+    // Display cookies in console
+    console.log("Current Cookies:", document.cookie);
+
+    // Welcome message based on cookie
+    if (document.cookie.includes("username=BeHacker")) {
+      console.log("Welcome back, Be Hacker!");
+    }
+  </script>
 </body>
 </html>
