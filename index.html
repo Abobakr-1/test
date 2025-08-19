@@ -150,7 +150,7 @@
 
   <section class="hero">
     <h2>Welcome to the Dark Side</h2>
-    <p>Learn to hack, defend, and dominate the cyber world.</p>
+    <p id="welcome-text">Learn to hack, defend, and dominate the cyber world.</p>
     <a class="btn" href="#courses">Join Now</a>
   </section>
 
@@ -190,17 +190,35 @@
 
   <!-- COOKIE SCRIPT -->
   <script>
-    // Set basic cookies
-    document.cookie = "username=BeHacker; expires=Fri, 31 Dec 2025 23:59:59 GMT; path=/";
-    document.cookie = "theme=dark; expires=Fri, 31 Dec 2025 23:59:59 GMT; path=/";
-
-    // Display cookies in console
-    console.log("Current Cookies:", document.cookie);
-
-    // Welcome message based on cookie
-    if (document.cookie.includes("username=BeHacker")) {
-      console.log("Welcome back, Be Hacker!");
+    // Function to get a cookie by name
+    function getCookie(name) {
+      let value = "; " + document.cookie;
+      let parts = value.split("; " + name + "=");
+      if (parts.length === 2) return parts.pop().split(";").shift();
     }
+
+    // Check if username cookie exists
+    let username = getCookie("username");
+
+    // If no username cookie, ask the visitor for their name
+    if (!username) {
+      username = prompt("Enter your name:");
+      if(username) {
+        document.cookie = `username=${username}; path=/; expires=Fri, 31 Dec 2025 23:59:59 GMT`;
+        alert(`Hello ${username}, welcome!`);
+      } else {
+        username = "Guest";
+        alert(`Hello Guest, welcome!`);
+      }
+    } else {
+      alert(`Welcome back, ${username}!`);
+    }
+
+    // Show username on hero section
+    document.getElementById("welcome-text").innerText += ` Welcome, ${username}!`;
+
+    // Optional: print cookies in console
+    console.log("Current Cookies:", document.cookie);
   </script>
 </body>
 </html>
