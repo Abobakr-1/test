@@ -136,6 +136,55 @@
       margin-top: 40px;
       border-top: 2px solid #00ff00;
     }
+
+    /* COOKIE CONSENT BANNER */
+    #cookie-banner {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #000;
+      color: #0f0;
+      padding: 15px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 2px solid red;
+      z-index: 2000;
+      box-shadow: 0 0 20px #0f0, 0 0 40px red, 0 0 60px #0f0;
+      font-weight: bold;
+      animation: flicker 1.5s infinite alternate;
+      border-radius: 10px;
+      gap: 15px;
+    }
+    #cookie-banner span {
+      text-shadow: 0 0 5px #0f0, 0 0 10px red;
+    }
+    #cookie-banner button {
+      background: red;
+      border: 2px solid #0f0;
+      color: #fff;
+      padding: 8px 15px;
+      margin-left: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+      text-shadow: 0 0 5px #0f0;
+    }
+    #cookie-banner button:hover {
+      background: darkred;
+      box-shadow: 0 0 10px red, 0 0 20px #0f0;
+    }
+
+    @keyframes flicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        opacity: 1;
+      }
+      20%, 22%, 24%, 55% {
+        opacity: 0.4;
+      }
+    }
   </style>
 </head>
 <body>
@@ -188,37 +237,55 @@
     <p>© 2025 Be Hacker | Enter at Your Own Risk ⚠️</p>
   </footer>
 
-  <!-- COOKIE SCRIPT -->
+  <!-- COOKIE CONSENT BANNER -->
+  <div id="cookie-banner" style="display:none;">
+    <span>We use cookies to remember your name. Accept to continue?</span>
+    <div>
+      <button id="accept-cookies">Accept</button>
+      <button id="decline-cookies">Decline</button>
+    </div>
+  </div>
+
   <script>
-    // Function to get a cookie by name
     function getCookie(name) {
       let value = "; " + document.cookie;
       let parts = value.split("; " + name + "=");
       if (parts.length === 2) return parts.pop().split(";").shift();
     }
 
-    // Check if username cookie exists
-    let username = getCookie("username");
+    let cookieConsent = getCookie("cookieConsent");
+    if(!cookieConsent) document.getElementById("cookie-banner").style.display = "flex";
 
-    // If no username cookie, ask the visitor for their name
-    if (!username) {
-      username = prompt("Enter your name:");
-      if(username) {
-        document.cookie = `username=${username}; path=/; expires=Fri, 31 Dec 2025 23:59:59 GMT`;
-        alert(`Hello ${username}, welcome!`);
-      } else {
-        username = "Guest";
-        alert(`Hello Guest, welcome!`);
-      }
-    } else {
-      alert(`Welcome back, ${username}!`);
+    document.getElementById("accept-cookies").onclick = function() {
+      document.cookie = "cookieConsent=accepted; path=/; expires=Fri, 31 Dec 2025 23:59:59 GMT";
+      document.getElementById("cookie-banner").style.display = "none";
+      askUsername();
     }
 
-    // Show username on hero section
-    document.getElementById("welcome-text").innerText += ` Welcome, ${username}!`;
+    document.getElementById("decline-cookies").onclick = function() {
+      document.cookie = "cookieConsent=declined; path=/; expires=Fri, 31 Dec 2025 23:59:59 GMT";
+      document.getElementById("cookie-banner").style.display = "none";
+      alert("You declined cookies. Your name won't be remembered.");
+    }
 
-    // Optional: print cookies in console
-    console.log("Current Cookies:", document.cookie);
+    function askUsername() {
+      let username = getCookie("username");
+      if (!username) {
+        username = prompt("Enter your name:");
+        if(username) {
+          document.cookie = `username=${username}; path=/; expires=Fri, 31 Dec 2025 23:59:59 GMT`;
+          alert(`Hello ${username}, welcome!`);
+        } else {
+          username = "Guest";
+          alert(`Hello Guest, welcome!`);
+        }
+      } else {
+        alert(`Welcome back, ${username}!`);
+      }
+      document.getElementById("welcome-text").innerText += ` Welcome, ${username}!`;
+    }
+
+    if(cookieConsent === "accepted") askUsername();
   </script>
 </body>
 </html>
