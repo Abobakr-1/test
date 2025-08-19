@@ -5,71 +5,125 @@
   <title>CyberSecure Academy</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
-      background: #f5f5f5;
-      color: #333;
+      background: #0d0d0d;
+      color: #eaeaea;
+      background-image: url("https://i.ibb.co/5sLgW8F/binary-bg.gif");
+      background-size: cover;
+      background-attachment: fixed;
     }
+
     header {
-      background: #0d1b2a;
+      background: linear-gradient(90deg, #0d1b2a, #1b263b, #0d1b2a);
       color: white;
-      padding: 1rem;
+      padding: 1rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.6);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
     }
     header h1 {
       margin: 0;
+      font-size: 1.5rem;
+      letter-spacing: 2px;
+      color: #00ffcc;
     }
     nav a {
-      color: white;
-      margin: 0 10px;
+      color: #eaeaea;
+      margin: 0 15px;
       text-decoration: none;
       font-weight: bold;
+      transition: color 0.3s;
     }
+    nav a:hover {
+      color: #00ffcc;
+    }
+
     .hero {
       text-align: center;
-      padding: 60px 20px;
-      background: url("https://via.placeholder.com/1200x400") no-repeat center;
+      padding: 80px 20px;
+      background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)),
+                  url("https://i.ibb.co/qDbCtLV/hacker-bg.jpg") no-repeat center;
       background-size: cover;
-      color: white;
+      color: #00ffcc;
+    }
+    .hero h2 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+    .hero p {
+      font-size: 1.2rem;
     }
     .btn {
       display: inline-block;
-      margin-top: 15px;
-      padding: 12px 24px;
+      margin-top: 20px;
+      padding: 12px 28px;
       background: #e63946;
       color: white;
       text-decoration: none;
-      border-radius: 5px;
+      border-radius: 30px;
       font-weight: bold;
+      transition: background 0.3s, transform 0.3s;
     }
+    .btn:hover {
+      background: #ff4d6d;
+      transform: scale(1.05);
+    }
+
     .courses {
-      padding: 40px 20px;
+      padding: 50px 20px;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
+      gap: 25px;
       max-width: 1200px;
       margin: auto;
     }
     .course-card {
-      background: white;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      background: rgba(20,20,20,0.9);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
       text-align: center;
+      transition: transform 0.3s;
+    }
+    .course-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 6px 15px rgba(0,255,204,0.5);
     }
     .course-card img {
       width: 100%;
-      border-radius: 5px;
+      border-radius: 8px;
+      margin-bottom: 15px;
     }
+    .course-card h3 {
+      color: #00ffcc;
+    }
+
+    section#about, section#contact {
+      padding: 50px 20px;
+      max-width: 900px;
+      margin: auto;
+      background: rgba(0,0,0,0.8);
+      border-radius: 10px;
+      margin-top: 30px;
+      box-shadow: 0 4px 12px rgba(0,255,204,0.2);
+    }
+    section#about h2, section#contact h2 {
+      color: #00ffcc;
+    }
+
     footer {
       text-align: center;
       background: #0d1b2a;
-      color: white;
+      color: #ccc;
       padding: 1rem;
-      margin-top: 20px;
+      margin-top: 40px;
+      border-top: 2px solid #00ffcc;
     }
   </style>
 </head>
@@ -85,47 +139,48 @@
 
   <section class="hero">
     <h2>Master Cybersecurity Skills</h2>
-    <p>Learn ethical hacking, CompTIA-style certifications, and advanced defense strategies with us.</p>
+    <p>Learn ethical hacking, CompTIA certifications, and advanced defense strategies with hands-on labs.</p>
     <a class="btn" href="#courses">Explore Courses</a>
   </section>
 
   <section id="courses" class="courses">
     <div class="course-card">
-      <img src="https://via.placeholder.com/300x200" alt="Ethical Hacking">
+      <img src="https://i.ibb.co/2tS4PQj/ethical-hacking.jpg" alt="Ethical Hacking">
       <h3>Ethical Hacking Fundamentals</h3>
       <p>Start your journey into penetration testing and system security.</p>
       <a class="btn" href="#">Enroll Now</a>
     </div>
 
     <div class="course-card">
-      <img src="https://via.placeholder.com/300x200" alt="CompTIA Security+">
+      <img src="https://i.ibb.co/D7vPyW7/security-plus.jpg" alt="CompTIA Security+">
       <h3>CompTIA Security+ Prep</h3>
       <p>Learn everything needed to pass the Security+ certification.</p>
       <a class="btn" href="#">Enroll Now</a>
     </div>
 
     <div class="course-card">
-      <img src="https://via.placeholder.com/300x200" alt="Advanced Defense">
+      <img src="https://i.ibb.co/Y3rq7sj/cyber-defense.jpg" alt="Advanced Defense">
       <h3>Advanced Cyber Defense</h3>
       <p>Go beyond basics and defend against modern cyber threats.</p>
       <a class="btn" href="#">Enroll Now</a>
     </div>
   </section>
 
-  <section id="about" style="padding:40px; max-width:800px; margin:auto;">
+  <section id="about">
     <h2>About Us</h2>
     <p>CyberSecure Academy is your trusted source for world-class cybersecurity training. 
-    Our mission is to prepare the next generation of defenders against global cyber threats.</p>
+    Our mission is to prepare the next generation of defenders against global cyber threats. 
+    With real-world labs, expert mentors, and a strong community, we make you job-ready.</p>
   </section>
 
-  <section id="contact" style="padding:40px; max-width:800px; margin:auto; text-align:center;">
+  <section id="contact" style="text-align:center;">
     <h2>Contact Us</h2>
-    <p>Email: info@cybersecureacademy.com</p>
+    <p>Email: <a href="mailto:info@cybersecureacademy.com" style="color:#00ffcc;">info@cybersecureacademy.com</a></p>
     <p>Phone: +1 (555) 123-4567</p>
   </section>
 
   <footer>
-    <p>© 2025 CyberSecure Academy</p>
+    <p>© 2025 CyberSecure Academy | Designed with 💻🔒</p>
   </footer>
 </body>
 </html>
