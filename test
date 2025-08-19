@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hello HTTPS</title>
+</head>
+<body>
+  <h1>My First HTTPS Website</h1>
+  <p>This site is free and secure (https://)</p>
+</body>
+</html>
