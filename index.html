@@ -293,6 +293,41 @@
     body.danger header h1 { text-shadow: 0 0 25px #0f0, 0 0 50px #0f0; }
     body.danger .course-card { box-shadow: 0 0 20px #0f0; }
     body.danger #terminal { box-shadow: 0 0 30px red; border-color: red; }
+    /* Auth modals */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 3000;
+    }
+    .modal {
+      background: #000;
+      border: 2px solid #0f0;
+      box-shadow: 0 0 20px #0f0, 0 0 30px red;
+      border-radius: 10px;
+      padding: 20px;
+      width: 90%;
+      max-width: 420px;
+      color: #0f0;
+    }
+    .modal h3 { margin-top: 0; color: red; text-shadow: 0 0 10px red; }
+    .modal label { display: block; margin: 10px 0 6px; }
+    .modal input {
+      width: 100%;
+      background: #000;
+      color: #0f0;
+      border: 1px solid red;
+      border-radius: 6px;
+      padding: 8px 10px;
+      outline: none;
+      box-shadow: inset 0 0 8px #0f0;
+    }
+    .modal .actions { display: flex; gap: 10px; margin-top: 15px; justify-content: flex-end; }
+    .modal .btn-secondary { background: #111; border: 1px solid #0f0; color: #0f0; padding: 8px 14px; border-radius: 6px; cursor: pointer; }
+    .modal .btn-primary { background: red; border: 1px solid #0f0; color: #fff; padding: 8px 14px; border-radius: 6px; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -302,6 +337,10 @@
     <div class="actions">
       <button id="danger-toggle" class="chip" title="Toggle Danger Mode">Danger Mode</button>
       <button id="menu-toggle" aria-label="Toggle menu">☰</button>
+      <button id="login-btn" class="chip">Log In</button>
+      <button id="signup-btn" class="chip">Sign Up</button>
+      <span id="user-display" class="chip" style="display:none; cursor:default;"></span>
+      <button id="logout-btn" class="chip" style="display:none;">Log Out</button>
     </div>
     <nav id="main-nav">
       <a href="https://abobakr-1.github.io/test/#courses">Courses</a>
@@ -353,6 +392,40 @@
     </div>
   </div>
 
+  <!-- AUTH MODALS -->
+  <div id="login-modal" class="modal-overlay">
+    <div class="modal">
+      <h3>Log In</h3>
+      <form id="login-form">
+        <label for="login-username">Username</label>
+        <input id="login-username" type="text" required autocomplete="username" />
+        <label for="login-password">Password</label>
+        <input id="login-password" type="password" required autocomplete="current-password" />
+        <div class="actions">
+          <button type="button" id="login-cancel" class="btn-secondary">Cancel</button>
+          <button type="submit" class="btn-primary">Log In</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div id="signup-modal" class="modal-overlay">
+    <div class="modal">
+      <h3>Sign Up</h3>
+      <form id="signup-form">
+        <label for="signup-username">Username</label>
+        <input id="signup-username" type="text" required autocomplete="username" />
+        <label for="signup-password">Password</label>
+        <input id="signup-password" type="password" required autocomplete="new-password" />
+        <label for="signup-confirm">Confirm Password</label>
+        <input id="signup-confirm" type="password" required autocomplete="new-password" />
+        <div class="actions">
+          <button type="button" id="signup-cancel" class="btn-secondary">Cancel</button>
+          <button type="submit" class="btn-primary">Create Account</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script>
     function getCookie(name) {
       let value = "; " + document.cookie;
@@ -376,6 +449,7 @@
     }
 
     function askUsername() {
+      if (isLoggedIn()) { updateWelcome(); return; }
       let username = getCookie("username");
       if (!username) {
         username = prompt("Enter your name:");
@@ -389,7 +463,7 @@
       } else {
         alert(`Welcome back, ${username}!`);
       }
-      document.getElementById("welcome-text").innerText += ` Welcome, ${username}!`;
+      updateWelcome();
     }
 
     if(cookieConsent === "accepted") askUsername();
@@ -474,6 +548,93 @@
     // Simple terminal
     const termOut = document.getElementById('terminal-output');
     const termInput = document.getElementById('terminal-input');
+    // ===== AUTH HELPERS =====
+    const welcomeTextEl = document.getElementById('welcome-text');
+    const baseWelcomeText = welcomeTextEl ? welcomeTextEl.textContent : '';
+
+    function getUsersStore() {
+      try { return JSON.parse(localStorage.getItem('users') || '{}'); } catch(e) { return {}; }
+    }
+    function setUsersStore(store) { localStorage.setItem('users', JSON.stringify(store)); }
+    function getAuthUser() { return localStorage.getItem('authUser'); }
+    function isLoggedIn() { return !!getAuthUser(); }
+    function logout() { localStorage.removeItem('authUser'); refreshAuthUI(); updateWelcome(); }
+
+    function updateWelcome() {
+      const name = getAuthUser() || getCookie('username') || 'Guest';
+      if (welcomeTextEl) welcomeTextEl.textContent = baseWelcomeText.replace(/\s*Welcome,.*$/, '') + ` Welcome, ${name}!`;
+    }
+
+    function bufToHex(buffer) {
+      const bytes = new Uint8Array(buffer);
+      return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+    function generateSalt(bytes = 16) {
+      const arr = new Uint8Array(bytes);
+      crypto.getRandomValues(arr);
+      return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+    async function sha256Hex(text) {
+      const enc = new TextEncoder();
+      const data = enc.encode(text);
+      const hash = await crypto.subtle.digest('SHA-256', data);
+      return bufToHex(hash);
+    }
+    async function hashPasswordWithSalt(password, salt) {
+      return sha256Hex(`${salt}:${password}`);
+    }
+
+    async function signUp(username, password) {
+      const users = getUsersStore();
+      if (users[username]) throw new Error('Username already exists');
+      const salt = generateSalt(16);
+      const hash = await hashPasswordWithSalt(password, salt);
+      users[username] = { salt, hash, createdAt: Date.now() };
+      setUsersStore(users);
+      localStorage.setItem('authUser', username);
+      if (getCookie('cookieConsent') === 'accepted') {
+        document.cookie = `username=${username}; path=/; expires=Fri, 31 Dec 2025 23:59:59 GMT`;
+      }
+      refreshAuthUI();
+      updateWelcome();
+    }
+
+    async function logIn(username, password) {
+      const users = getUsersStore();
+      const rec = users[username];
+      if (!rec) throw new Error('Invalid credentials');
+      const hash = await hashPasswordWithSalt(password, rec.salt);
+      if (hash !== rec.hash) throw new Error('Invalid credentials');
+      localStorage.setItem('authUser', username);
+      if (getCookie('cookieConsent') === 'accepted') {
+        document.cookie = `username=${username}; path=/; expires=Fri, 31 Dec 2025 23:59:59 GMT`;
+      }
+      refreshAuthUI();
+      updateWelcome();
+    }
+
+    function refreshAuthUI() {
+      const loginBtn = document.getElementById('login-btn');
+      const signupBtn = document.getElementById('signup-btn');
+      const logoutBtn = document.getElementById('logout-btn');
+      const userDisplay = document.getElementById('user-display');
+      if (!loginBtn || !signupBtn || !logoutBtn || !userDisplay) return;
+      if (isLoggedIn()) {
+        const u = getAuthUser();
+        loginBtn.style.display = 'none';
+        signupBtn.style.display = 'none';
+        logoutBtn.style.display = 'inline-block';
+        userDisplay.style.display = 'inline-block';
+        userDisplay.textContent = `👤 ${u}`;
+      } else {
+        loginBtn.style.display = 'inline-block';
+        signupBtn.style.display = 'inline-block';
+        logoutBtn.style.display = 'none';
+        userDisplay.style.display = 'none';
+        userDisplay.textContent = '';
+      }
+    }
+
     function printToTerminal(text) {
       if(termOut) { termOut.textContent += (text + "\n"); termOut.scrollTop = termOut.scrollHeight; }
     }
@@ -482,10 +643,10 @@
       if(!command) return;
       switch(true) {
         case command === 'help':
-          printToTerminal('commands: help, whoami, echo <text>, clear, courses');
+          printToTerminal('commands: help, whoami, echo <text>, clear, courses, login, signup, logout');
           break;
         case command === 'whoami':
-          printToTerminal('user: ' + (getCookie('username') || 'Guest'));
+          printToTerminal('user: ' + (getAuthUser() || getCookie('username') || 'Guest'));
           break;
         case command.startsWith('echo '):
           printToTerminal(command.slice(5));
@@ -495,6 +656,16 @@
           break;
         case command === 'clear':
           if(termOut) termOut.textContent = '';
+          break;
+        case command === 'login':
+          printToTerminal('Use the UI buttons or type: echo login <username> <password>');
+          break;
+        case command === 'signup':
+          printToTerminal('Use the UI buttons or type: echo signup <username> <password>');
+          break;
+        case command === 'logout':
+          logout();
+          printToTerminal('logged out');
           break;
         default:
           printToTerminal('unknown command: ' + command);
@@ -509,6 +680,61 @@
         }
       });
     }
+
+    // Wire up auth UI
+    const loginModal = document.getElementById('login-modal');
+    const signupModal = document.getElementById('signup-modal');
+    const loginBtn = document.getElementById('login-btn');
+    const signupBtn = document.getElementById('signup-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+    const loginCancel = document.getElementById('login-cancel');
+    const signupCancel = document.getElementById('signup-cancel');
+    const loginForm = document.getElementById('login-form');
+    const signupForm = document.getElementById('signup-form');
+
+    function openModal(el) { if (el) el.style.display = 'flex'; }
+    function closeModal(el) { if (el) el.style.display = 'none'; }
+
+    if (loginBtn) loginBtn.addEventListener('click', () => openModal(loginModal));
+    if (signupBtn) signupBtn.addEventListener('click', () => openModal(signupModal));
+    if (logoutBtn) logoutBtn.addEventListener('click', () => logout());
+    if (loginCancel) loginCancel.addEventListener('click', () => closeModal(loginModal));
+    if (signupCancel) signupCancel.addEventListener('click', () => closeModal(signupModal));
+    if (loginModal) loginModal.addEventListener('click', (e) => { if (e.target === loginModal) closeModal(loginModal); });
+    if (signupModal) signupModal.addEventListener('click', (e) => { if (e.target === signupModal) closeModal(signupModal); });
+
+    if (loginForm) loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const u = document.getElementById('login-username').value.trim();
+      const p = document.getElementById('login-password').value;
+      try {
+        await logIn(u, p);
+        closeModal(loginModal);
+        alert('Logged in successfully');
+      } catch(err) {
+        alert(err.message || 'Login failed');
+      }
+    });
+    if (signupForm) signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const u = document.getElementById('signup-username').value.trim();
+      const p = document.getElementById('signup-password').value;
+      const c = document.getElementById('signup-confirm').value;
+      if (!u) { alert('Username is required'); return; }
+      if (p.length < 6) { alert('Password must be at least 6 characters'); return; }
+      if (p !== c) { alert('Passwords do not match'); return; }
+      try {
+        await signUp(u, p);
+        closeModal(signupModal);
+        alert('Account created and logged in');
+      } catch(err) {
+        alert(err.message || 'Sign up failed');
+      }
+    });
+
+    // Initial UI sync
+    refreshAuthUI();
+    updateWelcome();
   </script>
 
 
