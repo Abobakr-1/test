@@ -38,7 +38,7 @@
 </head>
 <body>
   <script>
-    try { if (localStorage.getItem('currentUser')) { window.location.replace('../../Be Hacker.html'); } } catch(e) {}
+    try { if (localStorage.getItem('currentUser')) { window.location.replace('../../Be%20Hacker.html'); } } catch(e) {}
   </script>
   <canvas id="matrix-canvas"></canvas>
   <div class="card">
@@ -59,8 +59,8 @@
 
       <div class="actions">
         <button type="submit">Create Account</button>
-        <a class="link" href="../log in/index3.html">I have an account</a>
-        <a class="link" href="../../Be Hacker.html">Back</a>
+        <a class="link" href="../log%20in/index3.html">I have an account</a>
+        <a class="link" href="../../Be%20Hacker.html">Back</a>
       </div>
       <div id="msg" class="msg"></div>
     </form>
@@ -96,7 +96,7 @@
       if(users.some(u => u.email.toLowerCase() === email.toLowerCase())) { msg.textContent='Email already registered.'; msg.style.color='red'; return; }
       users.push({ username, email, password: pass }); writeUsers(users);
       msg.textContent = 'Account created. Redirecting to login...';
-      setTimeout(()=>{ window.location.href = '../log in/index3.html'; }, 700);
+      setTimeout(()=>{ window.location.href = '../log%20in/index3.html'; }, 700);
     });
   </script>
 </body>
