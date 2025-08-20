@@ -5,21 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Be Hacker | Sign Up</title>
   <style>
-    body {
-      font-family: "Courier New", monospace;
-      margin: 0; padding: 0; background: #000; color: #fff;
-      min-height: 100vh; display: grid; place-items: center;
-    }
+    body { font-family: "Courier New", monospace; margin: 0; padding: 0; background: #000; color: #fff; min-height: 100vh; display: grid; place-items: center; }
     #matrix-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: -2; background: #000; pointer-events: none; }
     body::before { content: ""; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: -1; }
-    .card {
-      width: min(480px, 92vw);
-      background: rgba(0,0,0,0.85);
-      border: 1px solid #0f0;
-      border-radius: 12px;
-      padding: 22px;
-      box-shadow: 0 0 24px #0f0, 0 0 32px rgba(255,0,0,0.3);
-    }
+    .card { width: min(480px, 92vw); background: rgba(0,0,0,0.85); border: 1px solid #0f0; border-radius: 12px; padding: 22px; box-shadow: 0 0 24px #0f0, 0 0 32px rgba(255,0,0,0.3); }
     h1 { margin: 0 0 14px 0; color: #0f0; text-transform: uppercase; text-shadow: 0 0 15px #0f0, 0 0 30px #0f0; font-size: 1.6rem; text-align: center; }
     .subtitle { text-align: center; color: #aaa; margin-bottom: 18px; }
     label { display: block; margin: 12px 0 6px; color: #0f0; }
@@ -38,7 +27,7 @@
 </head>
 <body>
   <script>
-    try { if (localStorage.getItem('currentUser')) { window.location.replace('../../Be%20Hacker.html'); } } catch(e) {}
+    try { if (localStorage.getItem('currentUser')) { window.location.replace('Be%20Hacker.html'); } } catch(e) {}
   </script>
   <canvas id="matrix-canvas"></canvas>
   <div class="card">
@@ -59,8 +48,8 @@
 
       <div class="actions">
         <button type="submit">Create Account</button>
-        <a class="link" href="../log%20in/index3.html">I have an account</a>
-        <a class="link" href="../../Be%20Hacker.html">Back</a>
+        <a class="link" href="index3.html">I have an account</a>
+        <a class="link" href="Be%20Hacker.html">Back</a>
       </div>
       <div id="msg" class="msg"></div>
     </form>
@@ -96,7 +85,7 @@
       if(users.some(u => u.email.toLowerCase() === email.toLowerCase())) { msg.textContent='Email already registered.'; msg.style.color='red'; return; }
       users.push({ username, email, password: pass }); writeUsers(users);
       msg.textContent = 'Account created. Redirecting to login...';
-      setTimeout(()=>{ window.location.href = '../log%20in/index3.html'; }, 700);
+      setTimeout(()=>{ window.location.href = 'index3.html'; }, 700);
     });
   </script>
 </body>
