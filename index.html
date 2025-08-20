@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
+<!-- saved from url=(0033)https://abobakr-1.github.io/test/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
   <title>Be Hacker</title>
   <style>
     body {
@@ -10,6 +10,16 @@
       padding: 0;
       background: #000;
       color: #fff;
+    }
+    /* Matrix background canvas behind everything */
+    #matrix-canvas {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -2;
+      background: #000;
+      pointer-events: none;
     }
     body::before {
       content: "";
@@ -37,6 +47,32 @@
       color: #00ff00;
       text-shadow: 0 0 15px #00ff00, 0 0 30px #00ff00;
     }
+    header .actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .chip {
+      background: #111;
+      color: #0f0;
+      border: 1px solid red;
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: 0.25s;
+      text-shadow: 0 0 6px #0f0;
+    }
+    .chip:hover { box-shadow: 0 0 10px red; background: #000; }
+    #menu-toggle {
+      background: transparent;
+      border: 2px solid #0f0;
+      color: #0f0;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      text-shadow: 0 0 6px #0f0;
+    }
     nav a {
       color: white;
       margin: 0 15px;
@@ -48,16 +84,46 @@
       color: red;
       text-shadow: 0 0 10px red;
     }
+    nav#main-nav {
+      display: flex;
+      align-items: center;
+    }
+    @media (max-width: 768px) {
+      nav#main-nav { display: none; }
+      nav#main-nav.open { display: block; position: absolute; top: 70px; right: 20px; background: #000; border: 1px solid red; padding: 10px 15px; }
+      nav#main-nav a { display: block; margin: 10px 0; }
+    }
     .hero {
       text-align: center;
       padding: 100px 20px;
       background: rgba(0,0,0,0.7);
       color: #fff;
     }
-    .hero h2 {
-      font-size: 3rem;
-      color: red;
-      text-shadow: 0 0 20px red, 0 0 40px red;
+    .hero h2 { font-size: 3rem; color: red; text-shadow: 0 0 20px red, 0 0 40px red; }
+    /* Glitch effect */
+    .glitch {
+      position: relative;
+      display: inline-block;
+    }
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      overflow: hidden;
+    }
+    .glitch::before { left: 2px; text-shadow: -2px 0 #0ff; clip-path: inset(0 0 60% 0); animation: glitchTop 2s infinite linear alternate-reverse; }
+    .glitch::after  { left: -2px; text-shadow: 2px 0 #f0f; clip-path: inset(40% 0 0 0); animation: glitchBottom 2.2s infinite linear alternate-reverse; }
+    @keyframes glitchTop {
+      0% { clip-path: inset(0 0 80% 0); }
+      50% { clip-path: inset(0 0 20% 0); }
+      100% { clip-path: inset(0 0 60% 0); }
+    }
+    @keyframes glitchBottom {
+      0% { clip-path: inset(20% 0 0 0); }
+      50% { clip-path: inset(60% 0 0 0); }
+      100% { clip-path: inset(40% 0 0 0); }
     }
     .hero p {
       font-size: 1.3rem;
@@ -114,6 +180,9 @@
     .course-card p {
       color: white;
     }
+    /* Reveal on scroll */
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.show { opacity: 1; transform: translateY(0); }
     section#about, section#contact {
       padding: 50px 20px;
       max-width: 900px;
@@ -128,6 +197,40 @@
       color: red;
       text-shadow: 0 0 15px red;
     }
+    /* Terminal widget */
+    #terminal {
+      max-width: 900px;
+      margin: 30px auto 0 auto;
+      background: #050505;
+      border: 1px solid #0f0;
+      border-radius: 8px;
+      box-shadow: 0 0 20px #0f0;
+      padding: 15px;
+    }
+    #terminal-output {
+      min-height: 120px;
+      font-family: "Courier New", monospace;
+      color: #0f0;
+      white-space: pre-wrap;
+      text-shadow: 0 0 6px #0f0;
+    }
+    #terminal-input-line {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 10px;
+    }
+    #terminal-input {
+      flex: 1;
+      background: #000;
+      color: #0f0;
+      border: 1px solid red;
+      border-radius: 4px;
+      padding: 6px 8px;
+      outline: none;
+      box-shadow: inset 0 0 8px #0f0;
+    }
+    .prompt { color: #0f0; text-shadow: 0 0 6px #0f0; }
     footer {
       text-align: center;
       background: #000;
@@ -137,7 +240,7 @@
       border-top: 2px solid #00ff00;
     }
 
-    /* COOKIE BANNER */
+    /* COOKIE CONSENT BANNER */
     #cookie-banner {
       position: fixed;
       bottom: 20px;
@@ -169,8 +272,8 @@
       border-radius: 5px;
       cursor: pointer;
       font-weight: bold;
-      text-shadow: 0 0 5px #0f0;
       transition: 0.3s;
+      text-shadow: 0 0 5px #0f0;
     }
     #cookie-banner button:hover {
       background: darkred;
@@ -185,60 +288,64 @@
         opacity: 0.4;
       }
     }
+    /* Danger mode intensifies effects */
+    body.danger .btn { background: #ff0000; box-shadow: 0 0 20px red; }
+    body.danger header h1 { text-shadow: 0 0 25px #0f0, 0 0 50px #0f0; }
+    body.danger .course-card { box-shadow: 0 0 20px #0f0; }
+    body.danger #terminal { box-shadow: 0 0 30px red; border-color: red; }
   </style>
 </head>
 <body>
+  <canvas id="matrix-canvas"></canvas>
   <header>
     <h1>Be Hacker</h1>
-    <nav>
-      <a href="#courses">Courses</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
+    <div class="actions">
+      <button id="danger-toggle" class="chip" title="Toggle Danger Mode">Danger Mode</button>
+      <button id="menu-toggle" aria-label="Toggle menu">☰</button>
+    </div>
+    <nav id="main-nav">
+      <a href="https://abobakr-1.github.io/test/#courses">Courses</a>
+      <a href="https://abobakr-1.github.io/test/#about">About</a>
+      <a href="https://abobakr-1.github.io/test/#contact">Contact</a>
     </nav>
   </header>
 
   <section class="hero">
-    <h2>Welcome to the Dark Side</h2>
-    <p id="welcome-text">Learn to hack, defend, and dominate the cyber world.</p>
-    <a class="btn" href="#courses">Join Now</a>
+    <h2 class="glitch" data-text="Welcome to the Dark Side">Welcome to the Dark Side</h2>
+    <p id="welcome-text">Learn to hack, defend, and dominate the cyber world. Welcome, BeHacker!</p>
+    <a class="btn" href="https://abobakr-1.github.io/test/#courses">Join Now</a>
   </section>
 
-  <section id="courses" class="courses">
-    <div class="course-card">
-      <h3>Hacking Basics</h3>
-      <p>Enter the world of penetration testing and system exploitation.</p>
-      <a class="btn" href="#">Start</a>
-    </div>
-    <div class="course-card">
-      <h3>Cyber Defense</h3>
-      <p>Defend against red team tactics and cyber attacks.</p>
-      <a class="btn" href="#">Defend</a>
-    </div>
-    <div class="course-card">
-      <h3>Advanced Exploits</h3>
-      <p>Master zero-days and advanced attack strategies.</p>
-      <a class="btn" href="#">Level Up</a>
-    </div>
+  <section id="courses">
+    <div id="courses-container" class="courses"></div>
   </section>
 
-  <section id="about">
+  <section id="about" class="reveal">
     <h2>About Be Hacker</h2>
     <p>Be Hacker is a dangerous place for those who want to learn the dark arts of cybersecurity. 
     Our courses mix real-world red team tactics with defense strategies to make you unstoppable.</p>
   </section>
 
-  <section id="contact">
+  <section id="contact" class="reveal">
     <h2>Contact Us</h2>
     <p>Email: <a href="mailto:dark@behacker.com" style="color:red;">dark@behacker.com</a></p>
     <p>Secure Line: +1 (555) 666-1313</p>
   </section>
 
+  <div id="terminal" class="reveal">
+    <div id="terminal-output"></div>
+    <div id="terminal-input-line">
+      <span class="prompt">root@behacker:~$</span>
+      <input id="terminal-input" type="text" autocomplete="off" placeholder="type 'help'" />
+    </div>
+  </div>
+
   <footer>
     <p>© 2025 Be Hacker | Enter at Your Own Risk ⚠️</p>
   </footer>
 
-  <!-- COOKIE CONSENT -->
-  <div id="cookie-banner" style="display:none;">
+  <!-- COOKIE CONSENT BANNER -->
+  <div id="cookie-banner" style="display: none;">
     <span>We use cookies to remember your name. Accept to continue?</span>
     <div>
       <button id="accept-cookies">Accept</button>
@@ -254,8 +361,6 @@
     }
 
     let cookieConsent = getCookie("cookieConsent");
-
-    // Show banner if consent not given
     if(!cookieConsent) document.getElementById("cookie-banner").style.display = "flex";
 
     document.getElementById("accept-cookies").onclick = function() {
@@ -272,22 +377,139 @@
 
     function askUsername() {
       let username = getCookie("username");
-      let visits = parseInt(getCookie("visits") || 0);
-
       if (!username) {
         username = prompt("Enter your name:");
-        if(username) document.cookie = `username=${username}; path=/; expires=Fri, 31 Dec 2025 23:59:59 GMT`;
-        else username = "Guest";
+        if(username) {
+          document.cookie = `username=${username}; path=/; expires=Fri, 31 Dec 2025 23:59:59 GMT`;
+          alert(`Hello ${username}, welcome!`);
+        } else {
+          username = "Guest";
+          alert(`Hello Guest, welcome!`);
+        }
+      } else {
+        alert(`Welcome back, ${username}!`);
       }
-
-      visits++;
-      document.cookie = `visits=${visits}; path=/; expires=Fri, 31 Dec 2025 23:59:59 GMT`;
-
-      alert(`Welcome, ${username}! This is your visit number ${visits}.`);
-      document.getElementById("welcome-text").innerText += ` Welcome, ${username}! Visit #${visits}`;
+      document.getElementById("welcome-text").innerText += ` Welcome, ${username}!`;
     }
 
     if(cookieConsent === "accepted") askUsername();
+
+    // Mobile menu toggle
+    const menuToggle = document.getElementById("menu-toggle");
+    const mainNav = document.getElementById("main-nav");
+    if(menuToggle && mainNav) {
+      menuToggle.addEventListener("click", () => {
+        mainNav.classList.toggle("open");
+      });
+    }
+
+    // Danger mode toggle
+    const dangerToggle = document.getElementById("danger-toggle");
+    if(dangerToggle) {
+      dangerToggle.addEventListener("click", () => {
+        document.body.classList.toggle("danger");
+      });
+    }
+
+    // Matrix rain background
+    const canvas = document.getElementById('matrix-canvas');
+    const ctx = canvas.getContext('2d');
+    const katakana = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン';
+    const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const nums = '0123456789';
+    const alphabet = katakana + latin + nums;
+    let columns = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const columnWidth = 16;
+      const numColumns = Math.floor(canvas.width / columnWidth);
+      columns = new Array(numColumns).fill(0);
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.font = '16px Courier New, monospace';
+      columns.forEach((y, index) => {
+        const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+        const x = index * 16;
+        ctx.fillStyle = '#0f0';
+        ctx.fillText(text, x, y);
+        const threshold = 100 + Math.random() * 1000;
+        columns[index] = y > canvas.height + threshold ? 0 : y + 16;
+      });
+      requestAnimationFrame(drawMatrix);
+    }
+    requestAnimationFrame(drawMatrix);
+
+    // Dynamic courses
+    const courses = [
+      { title: 'Hacking Basics', desc: 'Enter the world of penetration testing and system exploitation.', cta: 'Start' },
+      { title: 'Cyber Defense', desc: 'Defend against red team tactics and cyber attacks.', cta: 'Defend' },
+      { title: 'Advanced Exploits', desc: 'Master zero-days and advanced attack strategies.', cta: 'Level Up' },
+      { title: 'OSINT Ops', desc: 'Gather intel from open sources like a ghost.', cta: 'Scan' },
+      { title: 'Malware Lab', desc: 'Analyze and sandbox malicious binaries safely.', cta: 'Analyze' }
+    ];
+    const coursesContainer = document.getElementById('courses-container');
+    if(coursesContainer) {
+      courses.forEach(({ title, desc, cta }) => {
+        const card = document.createElement('div');
+        card.className = 'course-card reveal';
+        card.innerHTML = `<h3>${title}</h3><p>${desc}</p><a class="btn" href="#">${cta}</a>`;
+        coursesContainer.appendChild(card);
+      });
+    }
+
+    // Reveal on scroll
+    const revealables = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('show'); });
+    }, { threshold: 0.15 });
+    revealables.forEach(el => io.observe(el));
+
+    // Simple terminal
+    const termOut = document.getElementById('terminal-output');
+    const termInput = document.getElementById('terminal-input');
+    function printToTerminal(text) {
+      if(termOut) { termOut.textContent += (text + "\n"); termOut.scrollTop = termOut.scrollHeight; }
+    }
+    function handleCommand(cmd) {
+      const command = cmd.trim();
+      if(!command) return;
+      switch(true) {
+        case command === 'help':
+          printToTerminal('commands: help, whoami, echo <text>, clear, courses');
+          break;
+        case command === 'whoami':
+          printToTerminal('user: ' + (getCookie('username') || 'Guest'));
+          break;
+        case command.startsWith('echo '):
+          printToTerminal(command.slice(5));
+          break;
+        case command === 'courses':
+          printToTerminal(courses.map(c => '- ' + c.title).join('\n'));
+          break;
+        case command === 'clear':
+          if(termOut) termOut.textContent = '';
+          break;
+        default:
+          printToTerminal('unknown command: ' + command);
+      }
+    }
+    if(termInput) {
+      termInput.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter') {
+          printToTerminal('root@behacker:~$ ' + termInput.value);
+          handleCommand(termInput.value);
+          termInput.value = '';
+        }
+      });
+    }
   </script>
-</body>
-</html>
+
+
+</body></html>
