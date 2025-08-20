@@ -288,6 +288,23 @@
         opacity: 0.4;
       }
     }
+    /* COOKIE SETTINGS PANEL */
+    #cookie-panel {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      background: #000;
+      color: #0f0;
+      padding: 15px;
+      border: 2px solid red;
+      z-index: 2100;
+      box-shadow: 0 0 20px #0f0, 0 0 40px red, 0 0 60px #0f0;
+      border-radius: 10px;
+      max-width: 360px;
+    }
+    #cookie-panel .row { margin-bottom: 8px; }
+    #cookie-panel .small { color: #aaa; }
+    #cookie-panel .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
     /* Danger mode intensifies effects */
     body.danger .btn { background: #ff0000; box-shadow: 0 0 20px red; }
     body.danger header h1 { text-shadow: 0 0 25px #0f0, 0 0 50px #0f0; }
@@ -301,6 +318,7 @@
     <h1>Be Hacker</h1>
     <div class="actions">
       <button id="danger-toggle" class="chip" title="Toggle Danger Mode">Danger Mode</button>
+      <button id="cookie-settings" class="chip" title="Cookie settings">Cookies</button>
       <button id="menu-toggle" aria-label="Toggle menu">☰</button>
     </div>
     <nav id="main-nav">
@@ -352,12 +370,39 @@
       <button id="decline-cookies">Decline</button>
     </div>
   </div>
+  <!-- COOKIE SETTINGS PANEL -->
+  <div id="cookie-panel" style="display:none;">
+    <div class="row"><strong>Cookie Controls</strong></div>
+    <div class="row small">Consent: <span id="cookie-consent-status">unknown</span></div>
+    <div class="row small">Username: <span id="cookie-username-status">none</span></div>
+    <div class="actions">
+      <button id="panel-accept">Accept</button>
+      <button id="panel-decline">Decline</button>
+      <button id="panel-change-name">Set Name</button>
+      <button id="panel-clear">Clear All</button>
+      <button id="panel-close">Close</button>
+    </div>
+  </div>
 
   <script>
     function getCookie(name) {
       let value = "; " + document.cookie;
       let parts = value.split("; " + name + "=");
       if (parts.length === 2) return parts.pop().split(";").shift();
+    }
+    function setCookie(name, value, days) {
+      let expires = "";
+      if (days) {
+        const d = new Date();
+        d.setTime(d.getTime() + (days*24*60*60*1000));
+        expires = "; expires=" + d.toUTCString();
+      } else {
+        expires = "; expires=Fri, 31 Dec 2025 23:59:59 GMT";
+      }
+      document.cookie = name + "=" + value + expires + "; path=/";
+    }
+    function deleteCookie(name) {
+      document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
     }
 
     let cookieConsent = getCookie("cookieConsent");
@@ -393,6 +438,50 @@
     }
 
     if(cookieConsent === "accepted") askUsername();
+    // Cookie settings panel logic
+    const cookiePanel = document.getElementById('cookie-panel');
+    const cookieSettingsBtn = document.getElementById('cookie-settings');
+    const consentStatus = document.getElementById('cookie-consent-status');
+    const usernameStatus = document.getElementById('cookie-username-status');
+    function refreshCookiePanel() {
+      const cc = getCookie('cookieConsent') || 'none';
+      const un = getCookie('username') || 'none';
+      consentStatus.innerText = cc;
+      usernameStatus.innerText = un;
+    }
+    if(cookieSettingsBtn) {
+      cookieSettingsBtn.addEventListener('click', () => {
+        refreshCookiePanel();
+        cookiePanel.style.display = cookiePanel.style.display === 'none' ? 'block' : 'none';
+      });
+    }
+    document.getElementById('panel-close').onclick = () => { cookiePanel.style.display = 'none'; };
+    document.getElementById('panel-accept').onclick = () => {
+      setCookie('cookieConsent','accepted');
+      document.getElementById('cookie-banner').style.display = 'none';
+      refreshCookiePanel();
+      askUsername();
+    };
+    document.getElementById('panel-decline').onclick = () => {
+      setCookie('cookieConsent','declined');
+      document.getElementById('cookie-banner').style.display = 'none';
+      refreshCookiePanel();
+      alert("You declined cookies. Your name won't be remembered.");
+    };
+    document.getElementById('panel-change-name').onclick = () => {
+      const name = prompt('Enter your name:');
+      if(name) {
+        setCookie('username', name);
+        document.getElementById('welcome-text').innerText += ` Welcome, ${name}!`;
+        refreshCookiePanel();
+      }
+    };
+    document.getElementById('panel-clear').onclick = () => {
+      deleteCookie('cookieConsent');
+      deleteCookie('username');
+      document.getElementById('cookie-banner').style.display = 'flex';
+      refreshCookiePanel();
+    };
 
     // Mobile menu toggle
     const menuToggle = document.getElementById("menu-toggle");
