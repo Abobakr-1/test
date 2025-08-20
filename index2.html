@@ -26,9 +26,7 @@
   <meta name="robots" content="noindex" />
 </head>
 <body>
-  <script>
-    try { if (localStorage.getItem('currentUser')) { window.location.replace('Be%20Hacker.html'); } } catch(e) {}
-  </script>
+  
   <canvas id="matrix-canvas"></canvas>
   <div class="card">
     <h1>Be Hacker • Sign Up</h1>
@@ -49,7 +47,7 @@
       <div class="actions">
         <button type="submit">Create Account</button>
         <a class="link" href="index3.html">I have an account</a>
-        <a class="link" href="Be%20Hacker.html">Back</a>
+        <a class="link" href="index.html">Back</a>
       </div>
       <div id="msg" class="msg"></div>
     </form>
@@ -69,23 +67,44 @@
     (function draw(){ ctx.fillStyle = 'rgba(0,0,0,0.08)'; ctx.fillRect(0,0,canvas.width,canvas.height); ctx.font='16px Courier New, monospace'; columns.forEach((y,i)=>{ const ch = alphabet.charAt(Math.floor(Math.random()*alphabet.length)); ctx.fillStyle='#0f0'; ctx.fillText(ch, i*16, y); const th=100+Math.random()*1000; columns[i] = y>canvas.height+th?0:y+16; }); requestAnimationFrame(draw); })();
 
     // Simple localStorage signup (demo only)
-    function readUsers(){ try { return JSON.parse(localStorage.getItem('users') || '[]'); } catch(e){ return []; } }
-    function writeUsers(users){ localStorage.setItem('users', JSON.stringify(users)); }
+    function readUsers(){
+      try {
+        const raw = localStorage.getItem('users');
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch(e){ return []; }
+    }
+    function writeUsers(users){
+      try { localStorage.setItem('users', JSON.stringify(users)); } catch(e) {}
+    }
     const form = document.getElementById('signup-form');
     const msg = document.getElementById('msg');
+    let isSubmitting = false;
     form.addEventListener('submit', function(e){
-      e.preventDefault(); msg.textContent=''; msg.style.color = '#0f0';
-      const username = document.getElementById('su-username').value.trim();
-      const email = document.getElementById('su-email').value.trim();
-      const pass = document.getElementById('su-pass').value;
-      const pass2 = document.getElementById('su-pass2').value;
-      if(pass !== pass2){ msg.textContent = 'Passwords do not match.'; msg.style.color = 'red'; return; }
+      e.preventDefault();
+      if (isSubmitting) return;
+      msg.textContent=''; msg.style.color = '#0f0';
+      const usernameInput = document.getElementById('su-username');
+      const emailInput = document.getElementById('su-email');
+      const passInput = document.getElementById('su-pass');
+      const pass2Input = document.getElementById('su-pass2');
+      const username = usernameInput.value.trim();
+      const email = emailInput.value.trim();
+      const pass = passInput.value;
+      const pass2 = pass2Input.value;
+      if (username.length < 3){ msg.textContent='Username must be at least 3 characters.'; msg.style.color='red'; usernameInput.focus(); return; }
+      const emailOk = /.+@.+\..+/.test(email);
+      if (!emailOk){ msg.textContent='Enter a valid email.'; msg.style.color='red'; emailInput.focus(); return; }
+      if (pass.length < 6){ msg.textContent='Password must be at least 6 characters.'; msg.style.color='red'; passInput.focus(); return; }
+      if (pass !== pass2){ msg.textContent = 'Passwords do not match.'; msg.style.color = 'red'; pass2Input.focus(); return; }
       const users = readUsers();
       if(users.some(u => u.username.toLowerCase() === username.toLowerCase())) { msg.textContent='Username already taken.'; msg.style.color='red'; return; }
       if(users.some(u => u.email.toLowerCase() === email.toLowerCase())) { msg.textContent='Email already registered.'; msg.style.color='red'; return; }
       users.push({ username, email, password: pass }); writeUsers(users);
       msg.textContent = 'Account created. Redirecting to login...';
-      setTimeout(()=>{ window.location.href = 'index3.html'; }, 700);
+      isSubmitting = true;
+      setTimeout(()=>{ window.location.href = 'index3.html'; }, 500);
     });
   </script>
 </body>
