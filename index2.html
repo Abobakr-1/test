@@ -84,18 +84,8 @@
       requestAnimationFrame(draw); 
     })();
 
-    // Simple localStorage signup (demo only)
-    function readUsers(){
-      try {
-        const raw = localStorage.getItem('users');
-        if (!raw) return [];
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : [];
-      } catch(e){ return []; }
-    }
-    function writeUsers(users){
-      try { localStorage.setItem('users', JSON.stringify(users)); } catch(e) {}
-    }
+    // Backend API base
+    const API_BASE = 'http://localhost:4000';
 
     // Password regex: must have lowercase, uppercase, digit, special !@#$%^&*_-, min 8 chars
     const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*_-]).{8,}$/;
@@ -104,7 +94,7 @@
     const msg = document.getElementById('msg');
     let isSubmitting = false;
 
-    form.addEventListener('submit', function(e){
+    form.addEventListener('submit', async function(e){
       e.preventDefault();
       if (isSubmitting) return;
       msg.textContent=''; msg.style.color = '#0f0';
@@ -137,21 +127,29 @@
         msg.style.color = 'red'; pass2Input.focus(); return; 
       }
 
-      const users = readUsers();
-      if(users.some(u => u.username.toLowerCase() === username.toLowerCase())) { 
-        msg.textContent='Username already taken.'; 
-        msg.style.color='red'; return; 
+      try {
+        isSubmitting = true;
+        const resp = await fetch(`${API_BASE}/api/auth/signup`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, email, password: pass })
+        });
+        const data = await resp.json().catch(()=>({}));
+        if (!resp.ok) {
+          isSubmitting = false;
+          msg.textContent = data && data.error ? data.error : 'Signup failed';
+          msg.style.color='red';
+          return;
+        }
+        try { localStorage.setItem('token', data.token); } catch(e) {}
+        try { localStorage.setItem('currentUser', JSON.stringify(data.user)); } catch(e) {}
+        msg.textContent = 'Account created. Redirecting to login...';
+        setTimeout(()=>{ window.location.href = 'index3.html'; }, 600);
+      } catch (err) {
+        isSubmitting = false;
+        msg.textContent = 'Network error. Is the backend running on 4000?';
+        msg.style.color = 'red';
       }
-      if(users.some(u => u.email.toLowerCase() === email.toLowerCase())) { 
-        msg.textContent='Email already registered.'; 
-        msg.style.color='red'; return; 
-      }
-
-      users.push({ username, email, password: pass }); 
-      writeUsers(users);
-      msg.textContent = 'Account created. Redirecting to login...';
-      isSubmitting = true;
-      setTimeout(()=>{ window.location.href = 'index3.html'; }, 500);
     });
   </script>
 </body>
