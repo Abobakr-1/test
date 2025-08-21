@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DB Demo</title>
+    <style>
+      body { font-family: system-ui, sans-serif; margin: 2rem; }
+      form { display: flex; gap: .5rem; margin-bottom: 1rem; }
+      input, button { padding: .5rem .75rem; }
+      ul { padding: 0; list-style: none; }
+      li { padding: .5rem 0; border-bottom: 1px solid #eee; }
+      .ok { color: green; }
+      .bad { color: #b00; }
+    </style>
+  </head>
+  <body>
+    <h1>Database Demo</h1>
+    <div id="health">Checking API...</div>
+
+    <form id="post-form">
+      <input id="title" placeholder="Title" required />
+      <input id="content" placeholder="Content (optional)" />
+      <button type="submit">Create Post</button>
+    </form>
+
+    <ul id="posts"></ul>
+
+    <script>
+      const API = 'http://localhost:3001/api';
+      const healthDiv = document.getElementById('health');
+      const postsUl = document.getElementById('posts');
+      const form = document.getElementById('post-form');
+
+      async function checkHealth() {
+        try {
+          const res = await fetch(`${API}/health`);
+          const data = await res.json();
+          if (data.ok) {
+            healthDiv.textContent = 'API and DB connected';
+            healthDiv.className = 'ok';
+          } else {
+            healthDiv.textContent = 'API reachable but DB error';
+            healthDiv.className = 'bad';
+          }
+        } catch (e) {
+          healthDiv.textContent = 'API not reachable';
+          healthDiv.className = 'bad';
+        }
+      }
+
+      async function loadPosts() {
+        const res = await fetch(`${API}/posts`);
+        const data = await res.json();
+        postsUl.innerHTML = '';
+        for (const p of data) {
+          const li = document.createElement('li');
+          li.textContent = `${p.title} — ${p.content ?? ''}`;
+          postsUl.appendChild(li);
+        }
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title = document.getElementById('title').value.trim();
+        const content = document.getElementById('content').value.trim();
+        if (!title) return;
+        await fetch(`${API}/posts`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, content })
+        });
+        form.reset();
+        await loadPosts();
+      });
+
+      checkHealth();
+      loadPosts();
+    </script>
+  </body>
+  </html>
+
