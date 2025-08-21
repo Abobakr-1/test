@@ -60,22 +60,12 @@
     resizeCanvas(); window.addEventListener('resize', resizeCanvas);
     (function draw(){ ctx.fillStyle='rgba(0,0,0,0.08)'; ctx.fillRect(0,0,canvas.width,canvas.height); ctx.font='16px Courier New, monospace'; columns.forEach((y,i)=>{ const ch = alphabet.charAt(Math.floor(Math.random()*alphabet.length)); ctx.fillStyle='#0f0'; ctx.fillText(ch, i*16, y); const th=100+Math.random()*1000; columns[i] = y>canvas.height+th?0:y+16; }); requestAnimationFrame(draw); })();
 
-    // Simple localStorage auth (demo only)
-    function readUsers(){
-      try {
-        const raw = localStorage.getItem('users');
-        if (!raw) return [];
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : [];
-      } catch(e){ return []; }
-    }
-    function setCurrentUser(user){
-      try { localStorage.setItem('currentUser', JSON.stringify(user)); } catch(e) {}
-    }
+    // Backend API base
+    const API_BASE = 'http://localhost:4000';
     const form = document.getElementById('login-form');
     const msg = document.getElementById('msg');
     let isSubmitting = false;
-    form.addEventListener('submit', function(e){
+    form.addEventListener('submit', async function(e){
       e.preventDefault();
       if (isSubmitting) return; // prevent double submits
       msg.textContent=''; msg.style.color = '#0f0';
@@ -85,14 +75,29 @@
       const pass = passInput.value;
       if (!id) { msg.textContent = 'Enter username or email.'; msg.style.color = 'red'; idInput.focus(); return; }
       if (!pass) { msg.textContent = 'Enter your password.'; msg.style.color = 'red'; passInput.focus(); return; }
-      const users = readUsers();
-      const user = users.find(u => u.username.toLowerCase() === id.toLowerCase() || u.email.toLowerCase() === id.toLowerCase());
-      if(!user){ msg.textContent='User not found.'; msg.style.color='red'; return; }
-      if(user.password !== pass){ msg.textContent='Invalid password.'; msg.style.color='red'; return; }
-      setCurrentUser({ username: user.username, email: user.email });
-      msg.textContent='Access granted. Redirecting...'; msg.style.color='#0f0';
-      isSubmitting = true;
-      setTimeout(()=>{ window.location.href = 'index.html'; }, 400);
+      try {
+        isSubmitting = true;
+        const resp = await fetch(`${API_BASE}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ loginId: id, password: pass })
+        });
+        const data = await resp.json().catch(()=>({}));
+        if (!resp.ok) {
+          isSubmitting = false;
+          msg.textContent = data && data.error ? data.error : 'Login failed';
+          msg.style.color='red';
+          return;
+        }
+        try { localStorage.setItem('token', data.token); } catch(e) {}
+        try { localStorage.setItem('currentUser', JSON.stringify(data.user)); } catch(e) {}
+        msg.textContent='Access granted. Redirecting...'; msg.style.color='#0f0';
+        setTimeout(()=>{ window.location.href = 'index.html'; }, 400);
+      } catch (err) {
+        isSubmitting = false;
+        msg.textContent = 'Network error. Is the backend running on 4000?';
+        msg.style.color = 'red';
+      }
     });
   </script>
 </body>
