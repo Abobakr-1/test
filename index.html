@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<!-- saved from url=(0033)https://abobakr-1.github.io/test/ -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>Be Hacker</title>
   <style>
     body {
@@ -293,6 +293,7 @@
     body.danger header h1 { text-shadow: 0 0 25px #0f0, 0 0 50px #0f0; }
     body.danger .course-card { box-shadow: 0 0 20px #0f0; }
     body.danger #terminal { box-shadow: 0 0 30px red; border-color: red; }
+
     /* Auth modals */
     .modal-overlay {
       position: fixed;
@@ -331,6 +332,13 @@
   </style>
 </head>
 <body>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // Fill these with your project values (or set on window before this tag)
+    window.SUPABASE_URL = window.SUPABASE_URL || '';
+    window.SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || '';
+  </script>
+
   <canvas id="matrix-canvas"></canvas>
   <header>
     <h1>Be Hacker</h1>
@@ -397,7 +405,7 @@
     <div class="modal">
       <h3>Log In</h3>
       <form id="login-form">
-        <label for="login-username">Username</label>
+        <label for="login-username">Email</label>
         <input id="login-username" type="text" required autocomplete="username" />
         <label for="login-password">Password</label>
         <input id="login-password" type="password" required autocomplete="current-password" />
@@ -412,7 +420,7 @@
     <div class="modal">
       <h3>Sign Up</h3>
       <form id="signup-form">
-        <label for="signup-username">Username</label>
+        <label for="signup-username">Email</label>
         <input id="signup-username" type="text" required autocomplete="username" />
         <label for="signup-password">Password</label>
         <input id="signup-password" type="password" required autocomplete="new-password" />
@@ -446,6 +454,25 @@
       document.cookie = "cookieConsent=declined; path=/; expires=Fri, 31 Dec 2025 23:59:59 GMT";
       document.getElementById("cookie-banner").style.display = "none";
       alert("You declined cookies. Your name won't be remembered.");
+    }
+
+    // Supabase client (optional)
+    const SUPABASE_URL = window.SUPABASE_URL;
+    const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY;
+    const supabase = (typeof window.supabase !== 'undefined' && SUPABASE_URL && SUPABASE_ANON_KEY)
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+      : null;
+
+    let supabaseUserEmail = null;
+    async function initSupabaseAuth() {
+      if (!supabase) return;
+      const { data: { user } } = await supabase.auth.getUser();
+      supabaseUserEmail = user ? user.email : null;
+      supabase.auth.onAuthStateChange((_event, session) => {
+        supabaseUserEmail = session?.user?.email || null;
+        refreshAuthUI();
+        updateWelcome();
+      });
     }
 
     function askUsername() {
@@ -520,8 +547,8 @@
     }
     requestAnimationFrame(drawMatrix);
 
-    // Dynamic courses
-    const courses = [
+    // Dynamic courses (with optional DB override)
+    const defaultCourses = [
       { title: 'Hacking Basics', desc: 'Enter the world of penetration testing and system exploitation.', cta: 'Start' },
       { title: 'Cyber Defense', desc: 'Defend against red team tactics and cyber attacks.', cta: 'Defend' },
       { title: 'Advanced Exploits', desc: 'Master zero-days and advanced attack strategies.', cta: 'Level Up' },
@@ -529,14 +556,27 @@
       { title: 'Malware Lab', desc: 'Analyze and sandbox malicious binaries safely.', cta: 'Analyze' }
     ];
     const coursesContainer = document.getElementById('courses-container');
-    if(coursesContainer) {
-      courses.forEach(({ title, desc, cta }) => {
+    let currentCourses = defaultCourses.slice();
+    function renderCourses(items) {
+      if (!coursesContainer) return;
+      currentCourses = items.slice();
+      coursesContainer.innerHTML = '';
+      items.forEach(({ title, desc, cta }) => {
         const card = document.createElement('div');
         card.className = 'course-card reveal';
         card.innerHTML = `<h3>${title}</h3><p>${desc}</p><a class="btn" href="#">${cta}</a>`;
         coursesContainer.appendChild(card);
       });
     }
+    renderCourses(defaultCourses);
+    async function loadCoursesFromDB() {
+      if (!supabase) return;
+      const { data, error } = await supabase.from('courses').select('title, desc, cta').limit(50);
+      if (!error && data && data.length) {
+        renderCourses(data);
+      }
+    }
+    loadCoursesFromDB();
 
     // Reveal on scroll
     const revealables = document.querySelectorAll('.reveal');
@@ -556,9 +596,16 @@
       try { return JSON.parse(localStorage.getItem('users') || '{}'); } catch(e) { return {}; }
     }
     function setUsersStore(store) { localStorage.setItem('users', JSON.stringify(store)); }
-    function getAuthUser() { return localStorage.getItem('authUser'); }
+    function getAuthUser() { return supabase ? supabaseUserEmail : localStorage.getItem('authUser'); }
     function isLoggedIn() { return !!getAuthUser(); }
-    function logout() { localStorage.removeItem('authUser'); refreshAuthUI(); updateWelcome(); }
+    async function logout() {
+      if (supabase) {
+        await supabase.auth.signOut();
+      } else {
+        localStorage.removeItem('authUser');
+      }
+      refreshAuthUI(); updateWelcome();
+    }
 
     function updateWelcome() {
       const name = getAuthUser() || getCookie('username') || 'Guest';
@@ -585,13 +632,18 @@
     }
 
     async function signUp(username, password) {
-      const users = getUsersStore();
-      if (users[username]) throw new Error('Username already exists');
-      const salt = generateSalt(16);
-      const hash = await hashPasswordWithSalt(password, salt);
-      users[username] = { salt, hash, createdAt: Date.now() };
-      setUsersStore(users);
-      localStorage.setItem('authUser', username);
+      if (supabase) {
+        const { error } = await supabase.auth.signUp({ email: username, password });
+        if (error) throw new Error(error.message);
+      } else {
+        const users = getUsersStore();
+        if (users[username]) throw new Error('Username already exists');
+        const salt = generateSalt(16);
+        const hash = await hashPasswordWithSalt(password, salt);
+        users[username] = { salt, hash, createdAt: Date.now() };
+        setUsersStore(users);
+        localStorage.setItem('authUser', username);
+      }
       if (getCookie('cookieConsent') === 'accepted') {
         document.cookie = `username=${username}; path=/; expires=Fri, 31 Dec 2025 23:59:59 GMT`;
       }
@@ -600,12 +652,17 @@
     }
 
     async function logIn(username, password) {
-      const users = getUsersStore();
-      const rec = users[username];
-      if (!rec) throw new Error('Invalid credentials');
-      const hash = await hashPasswordWithSalt(password, rec.salt);
-      if (hash !== rec.hash) throw new Error('Invalid credentials');
-      localStorage.setItem('authUser', username);
+      if (supabase) {
+        const { error } = await supabase.auth.signInWithPassword({ email: username, password });
+        if (error) throw new Error(error.message);
+      } else {
+        const users = getUsersStore();
+        const rec = users[username];
+        if (!rec) throw new Error('Invalid credentials');
+        const hash = await hashPasswordWithSalt(password, rec.salt);
+        if (hash !== rec.hash) throw new Error('Invalid credentials');
+        localStorage.setItem('authUser', username);
+      }
       if (getCookie('cookieConsent') === 'accepted') {
         document.cookie = `username=${username}; path=/; expires=Fri, 31 Dec 2025 23:59:59 GMT`;
       }
@@ -652,16 +709,16 @@
           printToTerminal(command.slice(5));
           break;
         case command === 'courses':
-          printToTerminal(courses.map(c => '- ' + c.title).join('\n'));
+          printToTerminal(currentCourses.map(c => '- ' + c.title).join('\n'));
           break;
         case command === 'clear':
           if(termOut) termOut.textContent = '';
           break;
         case command === 'login':
-          printToTerminal('Use the UI buttons or type: echo login <username> <password>');
+          printToTerminal('Use the UI buttons or type: echo login <email> <password>');
           break;
         case command === 'signup':
-          printToTerminal('Use the UI buttons or type: echo signup <username> <password>');
+          printToTerminal('Use the UI buttons or type: echo signup <email> <password>');
           break;
         case command === 'logout':
           logout();
@@ -733,9 +790,11 @@
     });
 
     // Initial UI sync
-    refreshAuthUI();
-    updateWelcome();
+    (async () => {
+      await initSupabaseAuth();
+      refreshAuthUI();
+      updateWelcome();
+    })();
   </script>
-
-
-</body></html>
+</body>
+</html>
